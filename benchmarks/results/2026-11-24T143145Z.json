@@ -1,0 +1,404 @@
+{
+  "timestamp": "2026-11-24T14:31:45Z",
+  "everstate": "0.1.0",
+  "machine": "Darwin arm64 \u00b7 Python 3.14.6",
+  "runs": [
+    {
+      "backend": "local",
+      "embedder": "hashing",
+      "embedding_model": "hashing-v1",
+      "dimensions": 768,
+      "index_engine": "exact-bruteforce",
+      "corpus": 1000,
+      "remember_per_s": 8473.4,
+      "quality": {
+        "recall@1": 0.15,
+        "recall@5": 0.15,
+        "mrr": 0.15,
+        "n": 40,
+        "misses": [
+          {
+            "key": "diet",
+            "got": [
+              "d564"
+            ]
+          },
+          {
+            "key": "commute",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "pet",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "home_city",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "allergy",
+            "got": [
+              "notifications"
+            ]
+          },
+          {
+            "key": "birthday",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "languages_spoken",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "hobby",
+            "got": [
+              "diet"
+            ]
+          },
+          {
+            "key": "coffee",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "meeting_time",
+            "got": [
+              "pronouns"
+            ]
+          }
+        ]
+      },
+      "latency": {
+        "recall_cold_ms": {
+          "p50": 24.003,
+          "p95": 25.137,
+          "p99": 26.214
+        },
+        "recall_warm_ms": {
+          "p50": 0.036,
+          "p95": 0.071,
+          "p99": 0.096
+        }
+      },
+      "precedence": {
+        "accuracy": 1.0,
+        "cases": 3
+      },
+      "consolidation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "fabricated_accepted": [],
+        "candidates": 8
+      }
+    },
+    {
+      "backend": "redis",
+      "embedder": "hashing",
+      "embedding_model": "hashing-v1",
+      "dimensions": 768,
+      "index_engine": "vectorset",
+      "corpus": 1000,
+      "remember_per_s": 1676.4,
+      "quality": {
+        "recall@1": 0.15,
+        "recall@5": 0.175,
+        "mrr": 0.158,
+        "n": 40,
+        "misses": [
+          {
+            "key": "diet",
+            "got": [
+              "d564"
+            ]
+          },
+          {
+            "key": "commute",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "pet",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "home_city",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "allergy",
+            "got": [
+              "notifications"
+            ]
+          },
+          {
+            "key": "birthday",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "languages_spoken",
+            "got": [
+              "pronouns"
+            ]
+          },
+          {
+            "key": "hobby",
+            "got": [
+              "diet"
+            ]
+          },
+          {
+            "key": "coffee",
+            "got": [
+              "d575"
+            ]
+          },
+          {
+            "key": "meeting_time",
+            "got": [
+              "pronouns"
+            ]
+          }
+        ]
+      },
+      "latency": {
+        "recall_cold_ms": {
+          "p50": 1.01,
+          "p95": 1.09,
+          "p99": 1.125
+        },
+        "recall_warm_ms": {
+          "p50": 0.223,
+          "p95": 0.26,
+          "p99": 0.276
+        }
+      },
+      "precedence": {
+        "accuracy": 1.0,
+        "cases": 3
+      },
+      "consolidation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "fabricated_accepted": [],
+        "candidates": 8
+      }
+    },
+    {
+      "backend": "local",
+      "embedder": "ollama",
+      "embedding_model": "embeddinggemma",
+      "dimensions": 768,
+      "index_engine": "exact-bruteforce",
+      "corpus": 1000,
+      "remember_per_s": 88.3,
+      "quality": {
+        "recall@1": 0.7,
+        "recall@5": 0.8,
+        "mrr": 0.75,
+        "n": 40,
+        "misses": [
+          {
+            "key": "diet",
+            "got": [
+              "meeting_time"
+            ]
+          },
+          {
+            "key": "languages_spoken",
+            "got": [
+              "d156"
+            ]
+          },
+          {
+            "key": "meeting_time",
+            "got": [
+              "oncall"
+            ]
+          },
+          {
+            "key": "language",
+            "got": [
+              "d419"
+            ]
+          },
+          {
+            "key": "notifications",
+            "got": [
+              "deploy_freeze"
+            ]
+          },
+          {
+            "key": "timezone",
+            "got": [
+              "oncall"
+            ]
+          },
+          {
+            "key": "deploy_freeze",
+            "got": [
+              "release"
+            ]
+          },
+          {
+            "key": "secrets",
+            "got": [
+              "tests"
+            ]
+          },
+          {
+            "key": "incident",
+            "got": [
+              "d743"
+            ]
+          },
+          {
+            "key": "release",
+            "got": [
+              "d535"
+            ]
+          }
+        ]
+      },
+      "latency": {
+        "recall_cold_ms": {
+          "p50": 26.728,
+          "p95": 39.076,
+          "p99": 85.775
+        },
+        "recall_warm_ms": {
+          "p50": 0.064,
+          "p95": 0.095,
+          "p99": 0.144
+        }
+      },
+      "precedence": {
+        "accuracy": 1.0,
+        "cases": 3
+      },
+      "consolidation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "fabricated_accepted": [],
+        "candidates": 8
+      }
+    },
+    {
+      "backend": "redis",
+      "embedder": "ollama",
+      "embedding_model": "embeddinggemma",
+      "dimensions": 768,
+      "index_engine": "vectorset",
+      "corpus": 1000,
+      "remember_per_s": 94.0,
+      "quality": {
+        "recall@1": 0.65,
+        "recall@5": 0.75,
+        "mrr": 0.7,
+        "n": 40,
+        "misses": [
+          {
+            "key": "diet",
+            "got": [
+              "meeting_time"
+            ]
+          },
+          {
+            "key": "languages_spoken",
+            "got": [
+              "d156"
+            ]
+          },
+          {
+            "key": "meeting_time",
+            "got": [
+              "oncall"
+            ]
+          },
+          {
+            "key": "language",
+            "got": [
+              "d419"
+            ]
+          },
+          {
+            "key": "docs_format",
+            "got": [
+              "d527"
+            ]
+          },
+          {
+            "key": "notifications",
+            "got": [
+              "deploy_freeze"
+            ]
+          },
+          {
+            "key": "timezone",
+            "got": [
+              "oncall"
+            ]
+          },
+          {
+            "key": "deploy_freeze",
+            "got": [
+              "release"
+            ]
+          },
+          {
+            "key": "secrets",
+            "got": [
+              "tests"
+            ]
+          },
+          {
+            "key": "pii_logs",
+            "got": [
+              "d881"
+            ]
+          }
+        ]
+      },
+      "latency": {
+        "recall_cold_ms": {
+          "p50": 1.133,
+          "p95": 1.317,
+          "p99": 2.005
+        },
+        "recall_warm_ms": {
+          "p50": 0.304,
+          "p95": 0.357,
+          "p99": 0.414
+        }
+      },
+      "precedence": {
+        "accuracy": 1.0,
+        "cases": 3
+      },
+      "consolidation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "fabricated_accepted": [],
+        "candidates": 8
+      }
+    }
+  ],
+  "scaling": []
+}

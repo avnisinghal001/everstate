@@ -1,0 +1,38 @@
+# Local simulator for Everstate.
+#   redis   Redis 8 Open Source: vector sets + the Query Engine (FT.*), so both Redis
+#           index engines can be exercised. Stand-in for Memorystore.
+#   ollama  serves EmbeddingGemma (Google's open 768-d embedding model), the local
+#           stand-in for Vertex AI embeddings.
+#   console the Everstate console + /api/v2 wired to both (profile=redis, embedder=ollama)
+#
+#   make simulator     # starts redis + ollama and pulls embeddinggemma
+#   docker compose up console
+services:
+  redis:
+    image: redis:8.4
+    ports: ["127.0.0.1:6379:6379"]
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["127.0.0.1:11434:11434"]
+    volumes: ["ollama:/root/.ollama"]
+
+  console:
+    build: .
+    ports: ["127.0.0.1:8080:8080"]
+    environment:
+      EVERSTATE_OFFLINE: "true"
+      EVERSTATE_PROFILE: redis
+      EVERSTATE_EMBEDDER: ollama
+      EVERSTATE_REDIS_URL: redis://redis:6379/0
+      EVERSTATE_EMBED_BASE_URL: http://ollama:11434
+    depends_on:
+      redis: { condition: service_healthy }
+      ollama: { condition: service_started }
+
+volumes:
+  ollama: {}

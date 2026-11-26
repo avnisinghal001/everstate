@@ -1,0 +1,68 @@
+[project]
+name = "everstate"
+version = "1.0.0"
+description = "Everstate: long-term memory for AI agents. Capture activity, consolidate it into reviewable memories, and recall it in milliseconds."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+keywords = ["ai-agents", "agent-memory", "google-adk", "gemini", "spanner", "bigquery", "mcp"]
+dependencies = [
+    "google-adk>=2.15.0",
+    "google-genai>=2.33.0",
+    "google-cloud-aiplatform>=2.10.0",
+    "google-cloud-bigquery>=3.47.0",
+    "google-cloud-spanner>=3.72.0",
+    "opentelemetry-api>=1.42.0,<=1.45.2",
+    "opentelemetry-sdk>=1.42.0,<=1.45.2",
+    "opentelemetry-exporter-gcp-trace>=1.14.0",
+    "fastapi>=0.141.0",
+    "uvicorn>=0.54.0",
+    "pydantic>=2.14.0",
+    "python-dotenv>=1.2.0",
+    "httpx>=0.28.1",
+    "mcp>=2.3.0",
+    "redis>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+    "pytest-mock>=3.15.0",
+]
+firestore = [
+    "google-cloud-firestore>=2.20",
+]
+
+[project.scripts]
+everstate-console = "src.ui_service.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/common",
+    "src/interview_agent",
+    "src/preference_agent",
+    "src/ui_service",
+    "src/pipeline",
+    "src/mcp_server",
+    "src/studio",
+    "src/evaluation",
+    "src/everstate",
+]
+
+[tool.hatch.build]
+dev-mode-dirs = [".", "src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+markers = [
+    "redis: needs a Redis 8 server at EVERSTATE_TEST_REDIS_URL (default redis://localhost:6379/15)",
+    "ollama: needs Ollama with embeddinggemma at http://localhost:11434",
+    "live_gcp: needs Google Cloud credentials (RUN_GCP_LIVE_TESTS=1)",
+]
+asyncio_default_fixture_loop_scope = "function"

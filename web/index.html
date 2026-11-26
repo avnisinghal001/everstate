@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Everstate — cognitive memory for agents. Capture sessions, distill them overnight, and recall durable memories in milliseconds."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Geist+Mono:wght@400;500;600&family=Caveat:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>Everstate · Cognitive Memory</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Surface boot errors in the DOM instead of leaving a blank page.
+      window.__everstateErrors = [];
+      function everstateReportError(message) {
+        window.__everstateErrors.push(String(message));
+        var root = document.getElementById("root");
+        if (root && !root.childElementCount) {
+          root.innerHTML =
+            '<div style="max-width:640px;margin:12vh auto;padding:24px;font:14px/1.5 Inter,system-ui,sans-serif">' +
+            '<h1 style="font-size:20px;margin:0 0 8px">The interface failed to boot</h1>' +
+            '<p style="color:#666;margin:0 0 16px">Check the browser console, then reload. The API may still be healthy.</p>' +
+            '<pre style="white-space:pre-wrap;background:#f7f7f7;border:1px solid #ebebeb;border-radius:10px;padding:12px;font-size:12px">' +
+            String(message).replace(/[<>&]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]; }) +
+            "</pre></div>";
+        }
+      }
+      window.addEventListener("error", function (event) {
+        everstateReportError(event.error ? event.error.stack || event.message : event.message);
+      });
+      window.addEventListener("unhandledrejection", function (event) {
+        everstateReportError(event.reason && event.reason.stack ? event.reason.stack : event.reason);
+      });
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

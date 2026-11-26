@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Python tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build console (the API tests serve web/dist)
+        run: cd web && npm ci --no-audit --no-fund && npm run build
+      - name: Install
+        run: uv sync --frozen --extra dev
+      - name: Test (offline; Redis/Ollama/cloud tests auto-skip)
+        run: uv run python -m pytest -q
+        env:
+          EVERSTATE_OFFLINE: "true"
+
+  console:
+    name: Console (typecheck + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run build
+
+  landing:
+    name: Landing (build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: landing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: landing/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build

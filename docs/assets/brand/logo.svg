@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="96" viewBox="0 0 320 96" role="img" aria-label="Everstate">
+  <g transform="translate(8 8) scale(3.1)">
+    <path d="M13 2 23.4 8v10L13 24 2.6 18V8Z" fill="#141413"/>
+    <path d="M13 2 23.4 8 13 14 2.6 8Z" fill="#D97757"/>
+  </g>
+  <text x="104" y="60" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="600" fill="#141413" letter-spacing="-1">Everstate</text>
+</svg>

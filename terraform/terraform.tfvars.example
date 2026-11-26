@@ -1,0 +1,21 @@
+# Example Terraform Variable Values for Google ADK 2.0 Multi-Agent Demo
+# Rename to terraform.tfvars to use with `terraform apply`
+
+project_id          = "your-gcp-project-id"
+region              = "us-central1"
+model_name           = "gemini-3.8-flash"
+reasoning_model_name = "gemini-4-argon"
+bq_dataset_id       = "agent_telemetry"
+bq_table_id         = "agent_logs"
+spanner_instance_id = "everstate-spanner"
+spanner_database_id = "everstate_memory"
+otel_to_cloud       = true
+
+# Optional Identity-Aware Proxy (IAP) & Reverse Proxy Configuration
+# iap_enabled           = true
+# iap_expected_audience = "/projects/123456789012/global/backendServices/your-backend-service-id"
+# iap_header_name       = "x-goog-iap-jwt-assertion"
+# iap_proxy_url         = "https://app.example.com"
+
+# Optional list of additional IAM members authorized to invoke backend Cloud Run services
+# authorized_invoker_members = ["user:developer@example.com"]

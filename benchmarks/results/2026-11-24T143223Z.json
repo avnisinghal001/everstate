@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-11-24T14:32:23Z",
+  "everstate": "0.1.0",
+  "machine": "Darwin arm64 \u00b7 Python 3.14.6",
+  "redis_vectorset_quant": "NOQUANT",
+  "runs": [
+    {
+      "backend": "redis",
+      "embedder": "ollama",
+      "embedding_model": "embeddinggemma",
+      "dimensions": 768,
+      "index_engine": "vectorset",
+      "corpus": 1000,
+      "remember_per_s": 96.8,
+      "quality": {
+        "recall@1": 0.65,
+        "recall@5": 0.75,
+        "mrr": 0.7,
+        "n": 40,
+        "misses": [
+          {
+            "key": "diet",
+            "got": [
+              "meeting_time"
+            ]
+          },
+          {
+            "key": "languages_spoken",
+            "got": [
+              "d156"
+            ]
+          },
+          {
+            "key": "meeting_time",
+            "got": [
+              "oncall"
+            ]
+          },
+          {
+            "key": "language",
+            "got": [
+              "d419"
+            ]
+          },
+          {
+            "key": "docs_format",
+            "got": [
+              "d800"
+            ]
+          },
+          {
+            "key": "notifications",
+            "got": [
+              "deploy_freeze"
+            ]
+          },
+          {
+            "key": "timezone",
+            "got": [
+              "oncall"
+            ]
+          },
+          {
+            "key": "deploy_freeze",
+            "got": [
+              "release"
+            ]
+          },
+          {
+            "key": "secrets",
+            "got": [
+              "tests"
+            ]
+          },
+          {
+            "key": "pii_logs",
+            "got": [
+              "d881"
+            ]
+          }
+        ]
+      },
+      "latency": {
+        "query_embed_ms": {
+          "p50": 87.837,
+          "p95": 98.854
+        },
+        "recall_cold_ms": {
+          "p50": 1.142,
+          "p95": 1.292,
+          "p99": 1.35
+        },
+        "recall_warm_ms": {
+          "p50": 0.308,
+          "p95": 0.359,
+          "p99": 0.374
+        }
+      },
+      "precedence": {
+        "accuracy": 1.0,
+        "cases": 3
+      },
+      "consolidation": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "fabricated_accepted": [],
+        "candidates": 8
+      }
+    }
+  ],
+  "scaling": []
+}

@@ -1,0 +1,914 @@
+/* =============================================================================
+   Design tokens: personal OS / portfolio / brain
+   -----------------------------------------------------------------------------
+   Drop-in for Next.js + Tailwind v4. In app/globals.css:
+
+     @import "tailwindcss";
+     @import "../context/tokens/tokens.css";   (or copy into src/styles/)
+
+   Three tiers. Only ever consume tier 2 or tier 3 in components.
+     1. PRIMITIVES  raw values (--p-*)       never used directly in components
+     2. SEMANTIC    role-based (--bg, --fg)  swap per theme
+     3. COMPONENT   use-case (--sidebar-*, --prose-*, --sticker-*, --graph-*)
+
+   Theme switch: class="dark" on <html> (next-themes, attribute="class").
+   Baseline values were measured from okzaid.com on 2026-11-23. See
+   context/01-reference-analysis.md.
+   ========================================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* -----------------------------------------------------------------------------
+   1. PRIMITIVES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Neutral ramp: pure-gray, matches reference (hsl 0 0% n%) */
+  --p-gray-0: #ffffff;
+  --p-gray-25: #fcfcfc;
+  --p-gray-50: #fafafa;
+  --p-gray-100: #f5f5f5; /* 96%  muted */
+  --p-gray-150: #f2f2f2; /* 95%  accent / active nav */
+  --p-gray-200: #e6e6e6; /* 90%  border */
+  --p-gray-300: #d4d4d4;
+  --p-gray-400: #a3a3a3;
+  --p-gray-500: #737373; /* 45%  muted-foreground */
+  --p-gray-600: #999999; /* 60%  dark muted-foreground */
+  --p-gray-700: #404040;
+  --p-gray-800: #333333; /* 20%  dark border */
+  --p-gray-850: #262626; /* 15%  dark muted / accent */
+  --p-gray-900: #1c1c1c;
+  --p-gray-925: #171717; /* 9%   fg / dark bg */
+  --p-gray-950: #0f0f0f;
+
+  /* Hues: category, status and sticker accents (Tailwind 500s plus tints) */
+  --p-indigo-500: #6366f1;
+  --p-emerald-500: #10b981;
+  --p-violet-500: #a855f7;
+  --p-amber-400: #fbbf24;
+  --p-amber-500: #f59e0b;
+  --p-slate-500: #64748b;
+  --p-rose-500: #f43f5e;
+  --p-sky-500: #0ea5e9;
+  --p-orange-500: #f97316;
+  --p-teal-500: #14b8a6;
+  --p-pink-500: #ec4899;
+  --p-lime-500: #84cc16;
+  --p-blue-600: #2662d9; /* wiki-link blue, measured */
+  --p-blue-400: #6b9bff; /* wiki-link blue, dark */
+  --p-red-500: #e5484d;
+  --p-green-500: #30a46c;
+
+  /* Paper and ink: sticker / scrapbook layer */
+  --p-paper: #fbf8f1;
+  --p-paper-dark: #1d1b17;
+  --p-tape: rgb(255 240 180 / 0.72);
+  --p-ink: #1f1d1a;
+}
+
+/* -----------------------------------------------------------------------------
+   2. SEMANTIC: light (default)
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: var(--p-gray-0); /* page */
+  --bg-subtle: var(--p-gray-50); /* sidebar on wide editor, wells */
+  --bg-muted: #f7f7f7; /* = --shell: cards, sidebar, chips (BoardUI neutral-100) */
+  --bg-hover: #f0f0f0; /* row hover on canvas */
+  --bg-active: #ebebeb; /* = --well: pressed rows, search pill, segmented track */
+  --surface: var(--p-gray-0); /* cards, popovers */
+  --surface-raised: var(--p-gray-0); /* dialogs, cmd-k (plus shadow) */
+  --overlay: rgb(0 0 0 / 0.32); /* modal scrim */
+
+  /* Text */
+  --fg: var(--p-gray-925); /* primary text, headings */
+  --fg-muted: #666666; /* body copy, meta, chips: 5.74 on bg, 5.36 on shell #f7f7f7, 4.82 on well #ebebeb. okzaid/BoardUI #737373 fails on fills */
+  --fg-subtle: #8a8a8a; /* NON-TEXT ONLY (icons, disabled, decorative glyphs): 3.45:1. Never for readable text or placeholders */
+  --fg-inverse: var(--p-gray-0);
+
+  /* Lines */
+  --border: #ebebeb; /* decorative separators, secondary-button edge (BoardUI neutral-200) */
+  --border-strong: var(--p-gray-300);
+  --border-control: #8f8f8f; /* inputs, checkboxes, toggles: 3.23:1 (WCAG 1.4.11 needs 3:1) */
+  --focus-ring: var(--p-blue-600); /* 5.48:1 on bg, 5.03 on bg-muted */
+  --ring: var(--focus-ring);
+
+  /* Brand / action. Monochrome by default, the content supplies the color */
+  --primary: var(--p-gray-925);
+  --primary-fg: var(--p-gray-0);
+  --accent: var(--p-indigo-500); /* single optional brand hue */
+  --accent-fg: var(--p-gray-0);
+
+  /* Links */
+  --link: rgb(23 23 23 / 0.9); /* portfolio inline link: underlined ink */
+  --link-underline: rgb(23 23 23 / 0.35);
+  --wikilink: var(--p-blue-600); /* [[wiki]] links: blue, dashed */
+  --wikilink-underline: rgb(38 98 217 / 0.45);
+  --wikilink-missing: #c9252d; /* link to a page that doesn't exist yet: 5.55:1 */
+
+  /* Feedback / status */
+  --success: var(--p-green-500); /* fills only */
+  --warning: var(--p-amber-500);
+  --danger: var(--p-red-500);
+  --info: var(--p-sky-500);
+  --success-fg: #18794e; /* text-safe variants: all >= 4.96:1 on bg and bg-muted */
+  --warning-fg: #a35200;
+  --danger-fg: #c9252d;
+  --info-fg: #0369a1;
+
+  /* Project / publish status dots: >= 3:1 non-text contrast. A dot is never the
+     only signal; it always sits next to a text label and is aria-hidden */
+  --status-live: #059669;
+  --status-building: #d97706;
+  --status-archived: #8a8a8a;
+  --status-draft: #8a8a8a;
+  --status-scheduled: #0284c7;
+  --status-published: #059669;
+  --status-private: var(--p-slate-500);
+
+  /* Selection */
+  --selection: rgb(99 102 241 / 0.18);
+}
+
+/* -----------------------------------------------------------------------------
+   2. SEMANTIC: dark
+   -------------------------------------------------------------------------- */
+.dark {
+  color-scheme: dark;
+
+  --bg: #121212; /* canvas (BoardUI neutral-925) */
+  --bg-subtle: #171717;
+  --bg-muted: #1a1a1a; /* shell */
+  --bg-hover: #222222;
+  --bg-active: #2e2e2e; /* well / pressed: fg-muted 4.77:1 */
+  --surface: #121212;
+  --surface-raised: #1c1c1c;
+  --overlay: rgb(0 0 0 / 0.56);
+
+  --fg: var(--p-gray-150);
+  --fg-muted: var(--p-gray-600);
+  --fg-subtle: #7a7a7a; /* non-text only: 4.18 on bg, 3.53 on bg-muted */
+  --fg-inverse: var(--p-gray-925);
+
+  --border: #2b2b2b;
+  --border-strong: #454545;
+  --border-control: #757575; /* 3.89:1 */
+  --focus-ring: var(--p-blue-400); /* 6.62:1 on bg */
+  --ring: var(--focus-ring);
+
+  --primary: var(--p-gray-150);
+  --primary-fg: var(--p-gray-925);
+  --accent: #818cf8;
+  --accent-fg: var(--p-gray-925);
+
+  --link: rgb(242 242 242 / 0.92);
+  --link-underline: rgb(242 242 242 / 0.35);
+  --wikilink: var(--p-blue-400);
+  --wikilink-underline: rgb(107 155 255 / 0.45);
+  --wikilink-missing: #ff6369; /* 6.18:1 */
+
+  --success-fg: #3dd68c;
+  --warning-fg: #ffc53d;
+  --danger-fg: #ff6369;
+  --info-fg: #4cc3ff;
+
+  --status-live: #34d399;
+  --status-building: #fbbf24;
+  --status-archived: #7a7a7a;
+  --status-draft: #7a7a7a;
+  --status-scheduled: #38bdf8;
+  --status-published: #34d399;
+  --status-private: #94a3b8;
+
+  --selection: rgb(129 140 248 / 0.28);
+}
+
+/* -----------------------------------------------------------------------------
+   3. SCALES: type, space, radius, elevation, motion, layout, z
+   -------------------------------------------------------------------------- */
+/* Static scales live in @theme so Tailwind generates utilities from them
+   (text-sm, tracking-caps, font-hand, rounded-xs, shadow-xl, ease-spring). */
+@theme static {
+  /* Font families. Wire to next/font variables in app/layout.tsx */
+  --font-sans: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader, "Newsreader"), ui-serif, Georgia, serif; /* long-form essays (optional) */
+  --font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-hand: var(--font-caveat, "Caveat"), "Bradley Hand", cursive; /* sticker notes only */
+
+  /* Type scale: [size / line-height / tracking], measured from the reference */
+  --text-2xs: 0.6875rem; /* 11  graph legend, caps labels, backlinks h3 */
+  --text-2xs--line-height: 1.5;
+  --text-xs: 0.75rem; /* 12  tree rows, chips, meta */
+  --text-xs--line-height: 1.333;
+  --text-sm: 0.875rem; /* 14  UI, nav, wiki body */
+  --text-sm--line-height: 1.43;
+  --text-base: 1rem; /* 16  portfolio body */
+  --text-base--line-height: 1.625; /* 26px, the reference reading rhythm */
+  --text-lg: 1.125rem; /* 18  wiki h2 */
+  --text-lg--line-height: 1.7;
+  --text-xl: 1.25rem; /* 20  section h2 */
+  --text-xl--line-height: 1.4;
+  --text-2xl: 1.5rem; /* 24  page h1 (portfolio) */
+  --text-2xl--line-height: 1.333;
+  --text-3xl: 1.75rem; /* 28  wiki h1 */
+  --text-3xl--line-height: 1.7;
+  --text-4xl: 2.5rem; /* 40  studio/editor page title (Notion-like) */
+  --text-4xl--line-height: 1.2;
+  --text-5xl: 3.5rem; /* 56  hero/display (use sparingly) */
+  --text-5xl--line-height: 1.05;
+
+  --tracking-tighter: -0.025em; /* h1 on home (-0.6px @24) */
+  --tracking-tight: -0.02em; /* wiki h1 (-0.56px @28) */
+  --tracking-normal: 0;
+  --tracking-caps: 0.05em; /* EXPLORE / WHAT I BUILT labels */
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+}
+
+:root {
+
+  /* Space: 4px base; reference uses 2/4/6/8/10/12/16/24/32/48/64 */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0_5: 0.125rem; /* 2 */
+  --space-1: 0.25rem; /* 4 */
+  --space-1_5: 0.375rem; /* 6 */
+  --space-2: 0.5rem; /* 8 */
+  --space-2_5: 0.625rem; /* 10 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.25rem; /* 20 */
+  --space-6: 1.5rem; /* 24 */
+  --space-8: 2rem; /* 32 */
+  --space-10: 2.5rem; /* 40 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+  --space-24: 6rem; /* 96 */
+
+}
+
+@theme static {
+  /* Radius: reference base is 0.375rem; rows and chips are 4px */
+  --radius-xs: 0.25rem; /* 4   nav rows, tree rows, chips, inline code */
+  --radius-sm: 0.375rem; /* 6   inputs, buttons (the reference --radius) */
+  --radius-md: 0.5rem; /* 8   cards, cmd-k */
+  --radius-lg: 0.75rem; /* 12  popovers, peek panel */
+  --radius-xl: 1rem; /* 16  sheets */
+  --radius-2xl: 1.5rem; /* 24  chat action cards (screenshot 09) */
+  --radius-full: 9999px; /* dots, avatars, pills */
+
+  /* Elevation: flat UI; shadows only for floating layers and stickers */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.06), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.06), 0 2px 4px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.1), 0 4px 8px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 24px 64px rgb(0 0 0 / 0.16), 0 8px 16px rgb(0 0 0 / 0.06); /* cmd-k */
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* default UI */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* sticker pop, overshoot */
+}
+
+:root {
+  --duration-instant: 80ms; /* hover color */
+  --duration-fast: 150ms; /* cmd-k in (measured), menus */
+  --duration-base: 220ms; /* drawers, tabs */
+  --duration-slow: 400ms; /* page transitions, graph focus */
+  --duration-lazy: 700ms; /* ambient, sticker idle wobble */
+
+  /* Layout */
+  --sidebar-width: 14rem; /* 224 portfolio sidebar (measured) */
+  --sidebar-width-brain: 16rem; /* 256 brain file tree (measured) */
+  --sidebar-width-studio: 15rem; /* 240 studio sidebar (Notion-like) */
+  --topbar-height: 2.5rem; /* 40 brain/studio top bar (measured) */
+  --topbar-height-mobile: 3rem; /* 48 mobile top bar */
+  --content-width: 45rem; /* 720 reading column (measured) */
+  --content-width-wide: 66rem; /* 1056 explore grid, graph, galleries */
+  --content-width-editor: 44rem; /* 708 editor column */
+  --peek-width: 32rem; /* side peek panel (screenshot 06) */
+  --gutter: 1rem; /* mobile side gutter */
+  --gutter-lg: 2.5rem;
+
+  /* Z-index */
+  --z-base: 0;
+  --z-stickers: 10;
+  --z-sticky: 20;
+  --z-sidebar: 30;
+  --z-drawer: 40;
+  --z-popover: 50; /* cmd-k is z-50 in reference */
+  --z-modal: 60;
+  --z-toast: 70;
+  --z-sticker-drag: 80; /* a dragged sticker floats over everything */
+}
+
+/* -----------------------------------------------------------------------------
+   4. COMPONENT / USE-CASE TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* Sidebar nav (portfolio) */
+  --nav-item-px: var(--space-2);
+  --nav-item-py: var(--space-1_5);
+  --nav-item-gap: var(--space-2_5);
+  --nav-item-radius: var(--radius-xs);
+  --nav-item-fg: var(--fg-muted);
+  --nav-item-fg-active: var(--fg);
+  --nav-item-bg-active: var(--bg-active);
+  --nav-icon-size: 1rem;
+
+  /* Tree (brain / studio pages) */
+  --tree-row-height: 1.25rem; /* 20 */
+  --tree-row-radius: var(--radius-xs);
+  --tree-indent: 0.75rem; /* 12 per level */
+  --tree-font-size: var(--text-xs);
+  --tree-icon-size: 0.875rem;
+
+  /* Prose: two reading densities */
+  --prose-portfolio-size: var(--text-base); /* 16/26, muted color */
+  --prose-portfolio-lh: 1.625;
+  --prose-portfolio-fg: var(--fg-muted);
+  --prose-wiki-size: var(--text-sm); /* 14/23.8, ink color, dense */
+  --prose-wiki-lh: 1.7;
+  --prose-wiki-fg: var(--fg);
+  --prose-paragraph-gap: var(--space-4);
+  --prose-blockquote-border: 2px solid var(--border);
+  --prose-blockquote-pl: var(--space-4);
+  --prose-code-bg: var(--bg-muted);
+  --prose-code-fg: var(--fg-muted);
+  --prose-code-px: var(--space-1_5);
+  --prose-code-py: var(--space-0_5);
+
+  /* Tag / chip */
+  --chip-font-size: var(--text-xs);
+  --chip-px: var(--space-2);
+  --chip-py: var(--space-0_5);
+  --chip-radius: var(--radius-xs);
+  --chip-bg: var(--bg-muted);
+  --chip-fg: var(--fg-muted);
+  --chip-bg-selected: var(--primary);
+  --chip-fg-selected: var(--primary-fg);
+
+  /* Card / list row */
+  --card-padding: var(--space-4);
+  --card-gap: var(--space-3);
+  --card-radius: var(--radius-md);
+  --card-border: 1px solid var(--border);
+  --stat-label-size: var(--text-2xs);
+
+  /* Command palette (⌘K) */
+  --cmdk-width: 28rem; /* max-w-md */
+  --cmdk-top: 20vh;
+  --cmdk-radius: var(--radius-md);
+  --cmdk-shadow: var(--shadow-xl);
+  --cmdk-item-radius: var(--radius-xs);
+  --cmdk-item-bg-active: var(--bg-active);
+
+  /* Editor (studio) */
+  --editor-title-size: var(--text-4xl);
+  --editor-title-weight: 700;
+  --editor-body-size: 1.0625rem; /* 17 */
+  --editor-body-lh: 1.65;
+  --editor-block-gap: var(--space-1);
+  --editor-handle-color: var(--fg-subtle);
+  --editor-handle-size: 1.125rem;
+  --editor-gutter: 3.5rem; /* room for + and ⋮⋮ handles on hover */
+  --editor-code-inline-fg: #eb5757; /* Notion-style red inline code (screenshot 02) */
+  --editor-callout-bg: var(--bg-muted);
+
+  /* Chat / Writer agent */
+  --chat-width: 46rem;
+  --chat-bubble-user-bg: var(--bg-muted);
+  --chat-bubble-user-radius: var(--radius-2xl);
+  --chat-card-radius: var(--radius-2xl); /* "Writing" card, screenshot 09 */
+  --chat-card-border: 1px solid var(--border);
+  --chat-card-shadow: var(--shadow-sm);
+  --chat-card-padding: var(--space-6);
+  --chat-composer-radius: var(--radius-2xl);
+  --chat-composer-min-h: 3.5rem;
+  --chat-suggestion-bg: var(--bg-muted); /* "↳ Make it more decisive" chips */
+  --chat-action-ok: var(--status-published);
+  --chat-action-pending: var(--status-scheduled);
+  --chat-action-failed: var(--danger);
+
+  /* Graph */
+  --graph-bg: var(--bg);
+  --graph-edge: var(--fg-muted);
+  --graph-edge-opacity: 0.18;
+  --graph-edge-opacity-active: 0.7;
+  --graph-node-stroke: var(--bg);
+  --graph-node-r-min: 2px; /* measured */
+  --graph-node-r-max: 8px; /* measured; scaled by degree */
+  --graph-label-size: var(--text-2xs);
+  --graph-label-fg: var(--fg-muted);
+  --graph-dim-opacity: 0.12; /* non-neighbours on hover */
+
+  /* Graph categories. Extend freely; keep the order stable */
+  --cat-philosophy: var(--p-indigo-500);
+  --cat-projects: var(--p-emerald-500);
+  --cat-synthesis: var(--p-violet-500);
+  --cat-compost: var(--p-amber-500);
+  --cat-reference: var(--p-slate-500);
+  --cat-learning: var(--p-sky-500); /* e.g. system-design notes */
+  --cat-people: var(--p-pink-500);
+  --cat-hobbies: var(--p-orange-500);
+  --cat-journal: var(--p-teal-500);
+  --cat-work: var(--p-lime-500);
+
+  /* Stickers: die-cut, physical, theme-independent */
+  --sticker-outline: 3px; /* white die-cut border */
+  --sticker-outline-color: #ffffff;
+  --sticker-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.12)) drop-shadow(0 4px 8px rgb(0 0 0 / 0.12));
+  --sticker-shadow-lift: drop-shadow(0 2px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 16px 24px rgb(0 0 0 / 0.18));
+  --sticker-rotate-range: 8deg; /* random -8 to +8 at placement */
+  --sticker-hover-scale: 1.06;
+  --sticker-drag-scale: 1.12;
+  --sticker-size-sm: 4rem;
+  --sticker-size-md: 6rem;
+  --sticker-size-lg: 9rem;
+  --sticker-note-bg: #fff6a8; /* sticky-note sticker */
+  --sticker-tape: var(--p-tape);
+  --board-bg: var(--p-paper); /* sticker wall surface */
+  --board-dot: rgb(0 0 0 / 0.06); /* dotted-grid background */
+}
+
+.dark {
+  --board-bg: var(--p-paper-dark);
+  --board-dot: rgb(255 255 255 / 0.06);
+  --sticker-note-bg: #e8dc7a;
+  --graph-edge-opacity: 0.22;
+}
+
+/* -----------------------------------------------------------------------------
+   5. TAILWIND v4 BRIDGE: exposes tokens as utilities
+      bg-bg, text-fg, text-fg-muted, border-border, bg-cat-projects,
+      max-w-content, max-w-chat, md:/lg:/xl: breakpoints ...
+   -------------------------------------------------------------------------- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-bg-muted: var(--bg-muted);
+  --color-bg-hover: var(--bg-hover);
+  --color-bg-active: var(--bg-active);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-overlay: var(--overlay);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-fg-inverse: var(--fg-inverse);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-link: var(--link);
+  --color-wikilink: var(--wikilink);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-success-fg: var(--success-fg);
+  --color-warning-fg: var(--warning-fg);
+  --color-danger-fg: var(--danger-fg);
+  --color-info-fg: var(--info-fg);
+  --color-border-control: var(--border-control);
+  --color-focus-ring: var(--focus-ring);
+  --color-voice-1: var(--voice-c1);
+  --color-voice-2: var(--voice-c2);
+  --color-voice-3: var(--voice-c3);
+  --color-voice-4: var(--voice-c4);
+  --color-caption: var(--caption-bg);
+  --color-status-live: var(--status-live);
+  --color-status-building: var(--status-building);
+  --color-status-archived: var(--status-archived);
+  --color-status-draft: var(--status-draft);
+  --color-status-scheduled: var(--status-scheduled);
+  --color-status-published: var(--status-published);
+  --color-status-private: var(--status-private);
+  --color-cat-philosophy: var(--cat-philosophy);
+  --color-cat-projects: var(--cat-projects);
+  --color-cat-synthesis: var(--cat-synthesis);
+  --color-cat-compost: var(--cat-compost);
+  --color-cat-reference: var(--cat-reference);
+  --color-cat-learning: var(--cat-learning);
+  --color-cat-people: var(--cat-people);
+  --color-cat-hobbies: var(--cat-hobbies);
+  --color-cat-journal: var(--cat-journal);
+  --color-cat-work: var(--cat-work);
+  --color-board: var(--board-bg);
+  --color-sticker-note: var(--sticker-note-bg);
+
+
+
+
+
+  --container-content: var(--content-width);
+  --container-content-wide: var(--content-width-wide);
+  --container-editor: var(--content-width-editor);
+  --container-chat: var(--chat-width);
+  --container-cmdk: var(--cmdk-width);
+  --container-peek: var(--peek-width);
+  --container-help: var(--help-panel-width);
+
+  --breakpoint-sm: 40rem; /* 640  large phones landscape */
+  --breakpoint-md: 48rem; /* 768  tablet: sidebar becomes a drawer below this */
+  --breakpoint-lg: 64rem; /* 1024 laptop: persistent sidebar */
+  --breakpoint-xl: 80rem; /* 1280 desktop: brain tree and peek side-by-side */
+  --breakpoint-2xl: 96rem; /* 1536 */
+}
+
+/* -----------------------------------------------------------------------------
+   6. BASE
+   -------------------------------------------------------------------------- */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv11", "ss01"; /* Inter: single-storey a, open digits */
+  }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+  ::selection {
+    background: var(--selection);
+  }
+  :focus-visible {
+    outline: var(--focus-width) solid var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-radius: var(--radius-xs);
+  }
+  /* Elements inside a filled control (cmdk rows, chips) use an inset ring */
+  [data-focus-inset]:focus-visible {
+    outline-offset: calc(var(--focus-width) * -1);
+  }
+  .sr-only:not(:focus):not(:active) {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  * {
+    border-color: var(--border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-lazy: 0ms;
+    --sticker-hover-scale: 1;
+    --sticker-drag-scale: 1.02;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   7. ACCESSIBILITY: sizing, focus, user preferences
+      Preference classes go on <html>, set from the Settings / Help panel and
+      persisted per viewer (localStorage) and for the owner in D1.
+   -------------------------------------------------------------------------- */
+:root {
+  --focus-width: 2px;
+  --focus-offset: 2px;
+  --target-min: 24px; /* WCAG 2.2 SC 2.5.8 (AA) */
+  --target-touch: 44px; /* our floor on touch (coarse pointers) */
+  --help-panel-width: 26rem;
+  --skip-link-z: 100;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --target-min: var(--target-touch);
+  }
+}
+
+/* Text size: rem-based, so everything scales; layouts must reflow at 400% (SC 1.4.10) */
+html.a11y-text-lg { font-size: 112.5%; }
+html.a11y-text-xl { font-size: 125%; }
+html.a11y-text-2xl { font-size: 150%; }
+
+/* Text spacing override (SC 1.4.12): nothing may clip or overlap with this on */
+html.a11y-spacing {
+  --prose-portfolio-lh: 1.9;
+  --prose-wiki-lh: 1.9;
+}
+html.a11y-spacing body {
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+  line-height: 1.6;
+}
+html.a11y-spacing p { margin-block-end: 2em; }
+
+/* Legibility font for low vision */
+html.a11y-font-legible {
+  --font-sans: var(--font-atkinson, "Atkinson Hyperlegible Next"), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Always underline links (don't rely on color) */
+html.a11y-underline-links a:not([data-no-underline]) {
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
+}
+
+/* Higher contrast: user toggle or OS "Increase contrast" */
+html.a11y-contrast,
+html.a11y-contrast.dark {
+  --fg-muted: var(--fg);
+  --border: var(--border-control);
+  --link-underline: currentColor;
+  --focus-width: 3px;
+}
+@media (prefers-contrast: more) {
+  :root, .dark {
+    --fg-muted: var(--fg);
+    --border: var(--border-control);
+    --link-underline: currentColor;
+    --focus-width: 3px;
+  }
+}
+
+/* Windows High Contrast / forced colors: hand everything to system colors */
+@media (forced-colors: active) {
+  :root {
+    --focus-ring: Highlight;
+    --sticker-shadow: none;
+    --sticker-shadow-lift: none;
+  }
+  .status-dot, .cat-dot { forced-color-adjust: none; } /* keep hue; text label carries meaning anyway */
+}
+
+/* -----------------------------------------------------------------------------
+   8. VOICE: listening glow, captions
+      State lives on <html data-voice="idle|listening|thinking|speaking|error">.
+      JS writes --voice-level (0 to 1) from mic RMS about 30 times a second.
+      Component recipe: context/components/voice-glow.css
+   -------------------------------------------------------------------------- */
+@property --voice-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@property --voice-level {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  /* Soft rainbow vignette (no hard border): 6-stop spectrum */
+  --voice-c1: #6366f1; /* indigo */
+  --voice-c2: #0ea5e9; /* sky */
+  --voice-c3: #ec4899; /* pink */
+  --voice-c4: #10b981; /* emerald */
+  --voice-c5: #a855f7; /* violet */
+  --voice-c6: #f59e0b; /* amber */
+  --voice-error: #c9252d;
+  --voice-band: 22px; /* thickness of the haze band at rest */
+  --voice-band-grow: 26px; /* extra thickness at full voice level */
+  --voice-glow-blur: 40px; /* how far the haze dissolves inward */
+  --voice-glow-opacity: 0.5;
+  --voice-spin: 2.4s; /* thinking: gradient rotation period */
+  --voice-breathe: 1.8s; /* speaking: bloom pulse period */
+  --voice-fade: 240ms;
+  --z-voice-glow: 90; /* pointer-events: none overlay above everything */
+  --z-captions: 75;
+
+  --caption-bg: rgb(17 17 17 / 0.92); /* white text = 16:1 */
+  --caption-fg: #ffffff;
+  --caption-size: var(--text-lg);
+  --caption-max-width: 40rem;
+
+  --mic-button-size: 3rem; /* floating action button: above 44px */
+  --mic-button-bg: var(--primary);
+  --mic-button-fg: var(--primary-fg);
+}
+.dark {
+  --voice-c1: #818cf8;
+  --voice-c2: #38bdf8;
+  --voice-c3: #f472b6;
+  --voice-c4: #34d399;
+  --voice-c5: #c084fc;
+  --voice-c6: #fbbf24;
+  --voice-glow-opacity: 0.6;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --voice-spin: 0s;
+    --voice-breathe: 0s;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   9. MATERIALS: BoardUI-grade surfaces, alpha shades, light shadows, lit edges
+      Studied from boardui.com on 2026-11-23 (references/boardui/*.json).
+      Layering: canvas (--bg) → shell (cards/sidebar) → panel (inner, white)
+                → well (recessed tracks/search). Edges are drawn by shadows,
+                not borders: a 0 0 1px dark hairline plus a 1px white lit rim.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Alpha shades: overlays that work on ANY surface (hover, press, scrims) */
+  --black-a1: rgb(0 0 0 / 0.02);
+  --black-a2: rgb(0 0 0 / 0.04);
+  --black-a3: rgb(0 0 0 / 0.06);
+  --black-a4: rgb(0 0 0 / 0.08);
+  --black-a5: rgb(0 0 0 / 0.12);
+  --black-a6: rgb(0 0 0 / 0.16);
+  --black-a7: rgb(0 0 0 / 0.24);
+  --black-a8: rgb(0 0 0 / 0.32);
+  --black-a9: rgb(0 0 0 / 0.48);
+  --white-a1: rgb(255 255 255 / 0.02);
+  --white-a2: rgb(255 255 255 / 0.04);
+  --white-a3: rgb(255 255 255 / 0.06);
+  --white-a4: rgb(255 255 255 / 0.08);
+  --white-a5: rgb(255 255 255 / 0.12);
+  --white-a6: rgb(255 255 255 / 0.16);
+  --white-a7: rgb(255 255 255 / 0.25);
+  --white-a8: rgb(255 255 255 / 0.4);
+  --white-a9: rgb(255 255 255 / 0.6);
+
+  /* Fills (Apple "systemFill" idea): tint whatever is underneath */
+  --fill-hover: var(--black-a2);
+  --fill-press: var(--black-a4);
+  --fill-selected: var(--black-a3);
+
+  /* Surface stack */
+  --canvas: var(--bg);
+  --shell: #f7f7f7;
+  --panel: #ffffff;
+  --well: #ebebeb;
+  --rim: #ffffff; /* the 1px lit border on shells (BoardUI border-button-white) */
+  --hairline: var(--black-a8); /* drawn as 0 0 1px: reads as ~0.5px line */
+
+  /* Shadows: very light, layered */
+  --shadow-hair: 0 0 0 1px var(--black-a3);
+  --shadow-card: 0 1px 1px 0 rgb(0 0 0 / 0.05);
+  --shadow-button: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-dropdown: 0 0 0 1px var(--black-a3), 0 1px 1px 0 rgb(0 0 0 / 0.04), 0 4px 4px 0 rgb(0 0 0 / 0.02);
+  --shadow-shell: 0 1px 0 0 rgb(0 0 0 / 0.02), 0 1px 12px 0 rgb(0 0 0 / 0.06), 0 0 1px 0 rgb(0 0 0 / 0.32);
+  --shadow-float: 0 0 1px 0 rgb(0 0 0 / 0.32), 0 1px 12px 0 rgb(0 0 0 / 0.06), 0 16px 40px -12px rgb(0 0 0 / 0.16);
+  --shadow-thumb: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.12), 0 2px 6px rgb(0 0 0 / 0.06);
+  --highlight-top: inset 0 1px 0 0 var(--white-a7); /* lit top edge on solid buttons */
+  --inset-well: inset 0 1px 1px 0 rgb(0 0 0 / 0.04);
+
+  /* Radii (BoardUI): nav/buttons 10, cards 20, shells 24 */
+  --radius-control: 10px;
+  --radius-control-sm: 8px;
+  --radius-card: 20px;
+  --radius-shell: 24px;
+
+  /* Grain: tactile noise over large surfaces */
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --grain-opacity: 0.035;
+
+  /* Icons (Hugeicons, stroke-rounded). Sizes match the type they sit next to */
+  --icon-xs: 14px;
+  --icon-sm: 16px;
+  --icon-md: 18px;
+  --icon-lg: 20px;
+  --icon-xl: 24px;
+  --icon-stroke: 1.5;
+  --icon-primary: var(--fg);
+  --icon-secondary: var(--fg-muted); /* meaningful icons: >= 3:1 */
+  --icon-decorative: var(--fg-subtle);
+
+  /* Motion: quick, physical */
+  --press-scale: 0.97;
+  --duration-press: 120ms;
+}
+
+.dark {
+  --fill-hover: var(--white-a3);
+  --fill-press: var(--white-a5);
+  --fill-selected: var(--white-a4);
+
+  --shell: #1a1a1a;
+  --panel: #262626;
+  --well: #121212;
+  --rim: var(--white-a3);
+  --hairline: rgb(0 0 0 / 0.42);
+
+  --shadow-hair: 0 0 0 1px var(--white-a4);
+  --shadow-card: 0 1px 1px 0 rgb(0 0 0 / 0.14);
+  --shadow-button: 0 1px 2px 0 rgb(0 0 0 / 0.18);
+  --shadow-dropdown: 0 0 0 1px var(--white-a4), 0 1px 1px 0 rgb(0 0 0 / 0.14), 0 4px 4px 0 rgb(0 0 0 / 0.1);
+  --shadow-shell: 0 1px 0 0 rgb(0 0 0 / 0.1), 0 1px 12px 0 rgb(0 0 0 / 0.16), 0 0 1px 0 rgb(0 0 0 / 0.42), inset 0 1px 0 0 var(--white-a3);
+  --shadow-float: 0 0 0 1px var(--white-a4), 0 1px 12px 0 rgb(0 0 0 / 0.24), 0 16px 40px -12px rgb(0 0 0 / 0.5);
+  --shadow-thumb: 0 0 0 0.5px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.4);
+  --highlight-top: inset 0 1px 0 0 var(--white-a6);
+  --inset-well: inset 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --grain-opacity: 0.05;
+}
+
+/* Apple continuous corners where supported (progressive enhancement) */
+@supports (corner-shape: squircle) {
+  .squircle { corner-shape: squircle; }
+}
+
+/* -----------------------------------------------------------------------------
+   10. ACCENT: "make it yours". <html data-accent="clay|blue|violet|pink|red|orange|green|graphite">
+       clay is the Everstate brand default (matches the landing page: ink #141413 + clay #D97757).
+       Every value is contrast-checked: white text on --accent-solid-from >= 4.5:1,
+       --accent-text on --bg >= 4.5:1, --accent-soft-fg on --accent-soft-bg >= 4.5:1.
+       (BoardUI's own 500→600 blue gradient gives white text 3.71:1, so we start at 600.)
+   -------------------------------------------------------------------------- */
+:root, [data-accent="clay"] {
+  --accent-50: #fdf5f1; --accent-100: #fbeee8; --accent-200: #f3d3c4; --accent-400: #d97757;
+  --accent-solid-from: #b4532f; /* white 4.98 */
+  --accent-solid-to: #a84b2a; /* white 5.67 */
+  --accent-solid-press: #9a4425;
+  --accent-text: #b4532f; /* 4.72 on --bg */
+  --accent-soft-fg: #9a4425; /* 5.73 on --accent-soft-bg */
+}
+[data-accent="blue"] {
+  --accent-50: #eff6ff; --accent-100: #dbeafe; --accent-200: #bedbff; --accent-400: #3392ff;
+  --accent-solid-from: #155dfc; /* white 5.25 */
+  --accent-solid-to: #1447e6; /* white 6.83 */
+  --accent-solid-press: #193cb8;
+  --accent-text: #155dfc;
+  --accent-soft-fg: #1447e6;
+}
+[data-accent="violet"] {
+  --accent-50: #f5f3ff; --accent-100: #ede9fe; --accent-200: #ddd6ff; --accent-400: #a684ff;
+  --accent-solid-from: #7f22fe; --accent-solid-to: #7008e7; --accent-solid-press: #5d0ec0;
+  --accent-text: #7008e7; --accent-soft-fg: #5d0ec0;
+}
+[data-accent="pink"] {
+  --accent-50: #fdf2f8; --accent-100: #fce7f3; --accent-200: #fccee8; --accent-400: #fb64b6;
+  --accent-solid-from: #e60076; --accent-solid-to: #c6005c; --accent-solid-press: #a3004c;
+  --accent-text: #c6005c; --accent-soft-fg: #a3004c;
+}
+[data-accent="red"] {
+  --accent-50: #fef2f2; --accent-100: #ffe2e2; --accent-200: #ffc9c9; --accent-400: #ff6467;
+  --accent-solid-from: #e7000b; --accent-solid-to: #c10007; --accent-solid-press: #9f0712;
+  --accent-text: #c10007; --accent-soft-fg: #9f0712;
+}
+[data-accent="orange"] {
+  --accent-50: #fff7ed; --accent-100: #ffedd4; --accent-200: #ffd6a7; --accent-400: #ff8904;
+  --accent-solid-from: #ca3500; --accent-solid-to: #9f2d00; --accent-solid-press: #7e2a0c;
+  --accent-text: #ca3500; --accent-soft-fg: #9f2d00;
+}
+[data-accent="green"] {
+  --accent-50: #f0fdf4; --accent-100: #dcfce7; --accent-200: #b9f8cf; --accent-400: #05df72;
+  --accent-solid-from: #008236; --accent-solid-to: #016630; --accent-solid-press: #0d542b;
+  --accent-text: #008236; --accent-soft-fg: #016630;
+}
+[data-accent="graphite"] {
+  --accent-50: #fafafa; --accent-100: #f5f5f5; --accent-200: #e5e5e5; --accent-400: #a1a1a1;
+  --accent-solid-from: #404040; --accent-solid-to: #171717; --accent-solid-press: #0a0a0a;
+  --accent-text: #404040; --accent-soft-fg: #262626;
+}
+:root { --accent-soft-bg: var(--accent-100); --accent-glow: var(--accent-400); --accent: var(--accent-solid-from); --focus-ring: var(--accent-text); }
+
+/* Dark: lighter text tints, translucent soft fills */
+.dark, .dark[data-accent] {
+  --accent-text: var(--accent-400);
+  --accent-soft-fg: var(--accent-200);
+  --accent-soft-bg: color-mix(in srgb, var(--accent-solid-from) 28%, transparent);
+  --focus-ring: var(--accent-400);
+}
+
+/* -----------------------------------------------------------------------------
+   11. TYPE: Apple HIG names (as BoardUI does), web sizes
+       Utilities: text-large-title, text-title-1..3, text-headline, text-body,
+       text-callout, text-subhead, text-footnote, text-caption-1, text-caption-2
+   -------------------------------------------------------------------------- */
+@theme static {
+  --text-large-title: 2.125rem;  --text-large-title--line-height: 2.5625rem; --text-large-title--letter-spacing: -0.022em; --text-large-title--font-weight: 600;
+  --text-title-1: 1.75rem;       --text-title-1--line-height: 2.125rem;      --text-title-1--letter-spacing: -0.02em;   --text-title-1--font-weight: 600;
+  --text-title-2: 1.375rem;      --text-title-2--line-height: 1.75rem;       --text-title-2--letter-spacing: -0.017em;  --text-title-2--font-weight: 600;
+  --text-title-3: 1.25rem;       --text-title-3--line-height: 1.5625rem;     --text-title-3--letter-spacing: -0.012em;  --text-title-3--font-weight: 600;
+  --text-headline: 1rem;         --text-headline--line-height: 1.375rem;     --text-headline--letter-spacing: -0.006em; --text-headline--font-weight: 600;
+  --text-body: 0.875rem;         --text-body--line-height: 1.25rem;          --text-body--letter-spacing: -0.003em;
+  --text-callout: 0.9375rem;     --text-callout--line-height: 1.3125rem;
+  --text-subhead: 0.8125rem;     --text-subhead--line-height: 1.125rem;
+  --text-footnote: 0.75rem;      --text-footnote--line-height: 1rem;
+  --text-caption-1: 0.75rem;     --text-caption-1--line-height: 1rem;        --text-caption-1--letter-spacing: 0.0125em;
+  --text-caption-2: 0.6875rem;   --text-caption-2--line-height: 0.8125rem;   --text-caption-2--letter-spacing: 0.018em;
+}
+
+@theme inline {
+  --color-shell: var(--shell);
+  --color-panel: var(--panel);
+  --color-well: var(--well);
+  --color-fill-hover: var(--fill-hover);
+  --color-fill-press: var(--fill-press);
+  --color-accent-soft: var(--accent-soft-bg);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+  --color-accent-text: var(--accent-text);
+  --shadow-card: var(--shadow-card);
+  --shadow-button: var(--shadow-button);
+  --shadow-dropdown: var(--shadow-dropdown);
+  --shadow-shell: var(--shadow-shell);
+  --shadow-float: var(--shadow-float);
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-shell: var(--radius-shell);
+}
